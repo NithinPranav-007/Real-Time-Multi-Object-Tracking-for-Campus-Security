@@ -1,0 +1,7 @@
+ultralytics
+opencv-python
+torch
+numpy
+flask
+flask-cors
+deep-sort-realtime
