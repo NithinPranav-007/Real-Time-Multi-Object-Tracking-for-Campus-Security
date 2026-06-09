@@ -45,33 +45,33 @@ The project features a decoupled, asynchronous architecture separating computati
 ```mermaid
 graph TD
     %% Define System Nodes
-    VideoSource[Camera Feed / Webcam / RTSP] -->|OpenCV VideoCapture| AppServer[Flask API Service]
+    VideoSource["Camera Feed / Webcam / RTSP"] -->|"OpenCV VideoCapture"| AppServer["Flask API Service"]
     
-    subgraph Backend Pipeline [Backend Engine: app.py]
-        AppServer -->|Frame Stream| DetectionEngine[YOLODetector: YOLOv8s]
-        DetectionEngine -->|Bboxes & Confidences| TrackingEngine[DeepSortTracker: DeepSORT]
-        TrackingEngine -->|Stabilized Object Paths| RulesEngine{Security Rules Evaluator}
+    subgraph BackendPipeline ["Backend Engine: app.py"]
+        AppServer -->|"Frame Stream"| DetectionEngine["YOLODetector: YOLOv8s"]
+        DetectionEngine -->|"Bboxes & Confidences"| TrackingEngine["DeepSortTracker: DeepSORT"]
+        TrackingEngine -->|"Stabilized Object Paths"| RulesEngine{"Security Rules Evaluator"}
         
-        RulesEngine -->|Condition Met| Loitering[Loitering Detector]
-        RulesEngine -->|In Restricted Poly| Intrusion[Intrusion Detector]
-        RulesEngine -->|Static Bag-class > 20s| Abandoned[Abandoned Object Detector]
+        RulesEngine -->|"Condition Met"| Loitering["Loitering Detector"]
+        RulesEngine -->|"In Restricted Poly"| Intrusion["Intrusion Detector"]
+        RulesEngine -->|"Static Bag-class > 20s"| Abandoned["Abandoned Object Detector"]
         
-        Loitering -->|New Alert| AlertDB[(SQLite: alerts.db)]
-        Intrusion -->|New Alert| AlertDB
-        Abandoned -->|New Alert| AlertDB
+        Loitering -->|"New Alert"| AlertDB[("SQLite: alerts.db")]
+        Intrusion -->|"New Alert"| AlertDB
+        Abandoned -->|"New Alert"| AlertDB
         
-        Loitering -.->|Push Queue| MJPEGStream[MJPEG Video Generator]
-        Intrusion -.->|Push Queue| MJPEGStream
-        Abandoned -.->|Push Queue| MJPEGStream
+        Loitering -.->|"Push Queue"| MJPEGStream["MJPEG Video Generator"]
+        Intrusion -.->|"Push Queue"| MJPEGStream
+        Abandoned -.->|"Push Queue"| MJPEGStream
         
-        MJPEGStream -->|Render Overlays & Boxes| FrameBuffer[Shared Thread-safe Frame]
+        MJPEGStream -->|"Render Overlays & Boxes"| FrameBuffer["Shared Thread-safe Frame"]
     end
 
     %% Define UI Connections
-    ReactUI[React Web Dashboard] -->|POST /start| AppServer
-    ReactUI -->|POST /stop| AppServer
-    ReactUI -->|GET /video_feed| FrameBuffer
-    ReactUI -->|GET /alerts (Polling)| AlertDB
+    ReactUI["React Web Dashboard"] -->|"POST /start"| AppServer
+    ReactUI -->|"POST /stop"| AppServer
+    ReactUI -->|"GET /video_feed"| FrameBuffer
+    ReactUI -->|"GET /alerts (Polling)"| AlertDB
 ```
 
 ---
